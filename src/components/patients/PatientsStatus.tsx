@@ -1,81 +1,4 @@
-/* import {
-  UserCheck,
-  UserRound,
-  UserX,
-} from "lucide-react";
-
-interface PatientsStatsProps {
-  total: number;
-  active: number;
-  inactive: number;
-}
-
-const cards = [
-  {
-    key: "total",
-    label: "Total de pacientes",
-    icon: UserRound,
-  },
-
-  {
-    key: "active",
-    label: "Pacientes ativos",
-    icon: UserCheck,
-  },
-
-  {
-    key: "inactive",
-    label: "Pacientes inativos",
-    icon: UserX,
-  },
-] as const;
-
-export function PatientsStats({
-  total,
-  active,
-  inactive,
-}: PatientsStatsProps) {
-  const values = {
-    total,
-    active,
-    inactive,
-  };
-
-  return (
-    <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-      {cards.map(
-        ({
-          key,
-          label,
-          icon: Icon,
-        }) => (
-          <article
-            key={key}
-            className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-500">
-                  {label}
-                </p>
-
-                <p className="mt-2 text-2xl font-semibold text-slate-900">
-                  {values[key]}
-                </p>
-              </div>
-
-              <div className="rounded-xl bg-slate-100 p-3">
-                <Icon className="h-5 w-5 text-slate-700" />
-              </div>
-            </div>
-          </article>
-        ),
-      )}
-    </section>
-  );
-} */
-
-  import { useMemo } from "react";
+import { useMemo } from "react";
 
 import {
   Area,
@@ -139,9 +62,8 @@ function calculateAge(birthDate: string): number {
 export function PatientsStats({
   patients,
 }: PatientsStatsProps) {
-  /*
-   * BASIC METRICS
-   */
+
+  /*  BASIC METRICS */
 
   const activePatients = patients.filter(
     (patient) => patient.status === "ACTIVE",
@@ -165,9 +87,7 @@ export function PatientsStats({
           (inactivePatients / patients.length) * 100,
         );
 
-  /*
-   * PATIENT GROWTH
-   */
+  /* PATIENT GROWTH */
 
   const patientGrowth = useMemo(() => {
     const monthFormatter = new Intl.DateTimeFormat(
@@ -223,9 +143,7 @@ export function PatientsStats({
     });
   }, [patients]);
 
-  /*
-   * AGE DISTRIBUTION
-   */
+  /* AGE DISTRIBUTION */
 
   const ageDistribution = useMemo(() => {
     const ranges = [
@@ -272,9 +190,8 @@ export function PatientsStats({
 
   return (
     <section className="grid gap-4 lg:grid-cols-3">
-      {/* =====================================================
-          1 — PATIENT GROWTH
-      ===================================================== */}
+
+      {/* 1 — PATIENT GROWTH */}
 
       <article className="overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
         <div className="flex items-start justify-between">
@@ -362,9 +279,7 @@ export function PatientsStats({
         </div>
       </article>
 
-      {/* =====================================================
-          2 — TOTAL PATIENTS
-      ===================================================== */}
+      {/* 2 — TOTAL PATIENTS */}
 
       <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
         <div className="flex items-start justify-between">
