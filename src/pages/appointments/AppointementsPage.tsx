@@ -42,6 +42,11 @@ const PAGE_SIZE = 8;
 
 const DATA_LIMIT = 100000;
 
+const EMPTY_APPOINTMENTS: Appointment[] = [];
+const EMPTY_PATIENTS: Patient[] = [];
+const EMPTY_DOCTORS: Doctor[] = [];
+const EMPTY_SERVICES: MedicalService[] = [];
+
 function getErrorMessage(error: unknown): string {
   if (error instanceof Error) {
     return error.message;
@@ -110,15 +115,17 @@ export default function AppointmentsPage() {
     updateMutation.isPending ||
     deleteMutation.isPending;
 
-  const appointments =
-    appointmentsQuery.data?.data ?? [];
+const appointments =
+  appointmentsQuery.data?.data ?? EMPTY_APPOINTMENTS;
 
-  const patients =
-    relationshipsQuery.data?.patients ?? [];
-  const doctors =
-    relationshipsQuery.data?.doctors ?? [];
-  const services =
-    relationshipsQuery.data?.services ?? [];
+const patients =
+  relationshipsQuery.data?.patients ?? EMPTY_PATIENTS;
+
+const doctors =
+  relationshipsQuery.data?.doctors ?? EMPTY_DOCTORS;
+
+const services =
+  relationshipsQuery.data?.services ?? EMPTY_SERVICES;
 
   const rows = useMemo<AppointmentRow[]>(() => {
     const patientMap = new Map(

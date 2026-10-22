@@ -4,7 +4,7 @@ export interface DoctorSchedule {
   dayOfWeek: number;
   startTime: string;
   endTime: string;
-}[]
+}
 
 export interface Doctor {
   id: string;
