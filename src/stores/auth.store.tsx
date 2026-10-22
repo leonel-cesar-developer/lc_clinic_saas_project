@@ -1,38 +1,21 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-  type PropsWithChildren,
-} from "react";
+import { useCallback, useMemo, useState, type PropsWithChildren } from "react";
 
 import { authService } from "../api/auth/auth.service";
+
+import {
+  AuthContext,
+  type AuthContextValue,
+  type LoginCredentials,
+} from "./auth.context";
+
 import type { PublicUser } from "../types/user.types";
 
-interface LoginCredentials {
-  email: string;
-  password: string;
-}
-
-interface AuthContextValue {
-  user: PublicUser | null;
-  isAuthenticated: boolean;
-  isInitializing: boolean;
-  login: (credentials: LoginCredentials) => Promise<PublicUser>;
-  logout: () => Promise<void>;
-}
-
-const AuthContext = createContext<AuthContextValue | null>(null);
-
 export function AuthProvider({ children }: PropsWithChildren) {
-  const initialSession = authService.getSession();
-
   const [user, setUser] = useState<PublicUser | null>(
-    initialSession?.user ?? null,
+    () => authService.getSession()?.user ?? null,
   );
 
-  const [isInitializing] = useState(false);
+  const isInitializing = false;
 
   const login = useCallback(
     async (credentials: LoginCredentials): Promise<PublicUser> => {
@@ -58,18 +41,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
       login,
       logout,
     }),
-    [isInitializing, login, logout, user],
+    [user, login, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-
-export function useAuth(): AuthContextValue {
-  const context = useContext(AuthContext);
-
-  if (!context) {
-    throw new Error("useAuth deve ser usado dentro de AuthProvider.");
-  }
-
-  return context;
 }

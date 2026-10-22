@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 
 import { paths } from "../../app/router/Paths";
-import { useAuth } from "../../stores/auth.store";
+import { useAuth } from "../../stores/useAuth";
 
 export default function NotFoundPage() {
   const { isAuthenticated } = useAuth();
