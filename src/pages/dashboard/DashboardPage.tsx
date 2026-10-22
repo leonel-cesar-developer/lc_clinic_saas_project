@@ -1,159 +1,3 @@
-/* import {
-  CalendarCheck,
-  CalendarDays,
-  Stethoscope,
-  TrendingUp,
-  UserRound,
-  XCircle,
-} from "lucide-react";
-
-import PageContainer from "../../components/PageContainer";
-import { AppointmentStatusPanel } from "../../components/dashboard/AppointmentStatusPanel";
-import { DashboardAlerts } from "../../components/dashboard/DashboardAlert";
-import { DashboardStatCard } from "../../components/dashboard/DashboardStartCard";
-import { DoctorWorkload } from "../../components/dashboard/DoctorWorkLoad";
-import { TodayAppointments } from "../../components/dashboard/TodayAppointment";
-import { UpcomingAppointments } from "../../components/dashboard/UpcomingAppointments";
-import { useDashboard } from "../../hooks/useDashboard";
-
-import {
-  formatCurrency,
-  formatDashboardDate,
-} from "../../utils/dashboard.utils";
-
-export default function DashboardPage() {
-  const { data, isLoading, isError, refetch } = useDashboard();
-
-  if (isLoading) {
-    return (
-      <PageContainer
-        title="Dashboard"
-        description="Visão operacional da clínica."
-      >
-        <div className="flex min-h-80 items-center justify-center">
-          <p className="text-sm text-slate-500">A carregar dashboard...</p>
-        </div>
-      </PageContainer>
-    );
-  }
-
-  if (isError || !data) {
-    return (
-      <PageContainer
-        title="Dashboard"
-        description="Visão operacional da clínica."
-      >
-        <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center">
-          <h2 className="font-semibold text-slate-900">
-            Não foi possível carregar a dashboard
-          </h2>
-
-          <p className="mt-2 text-sm text-slate-500">
-            Ocorreu um problema ao consultar os dados da clínica.
-          </p>
-
-          <button
-            type="button"
-            onClick={() => void refetch()}
-            className="mt-5 rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-700"
-          >
-            Tentar novamente
-          </button>
-        </div>
-      </PageContainer>
-    );
-  }
-
-  const {
-    summary,
-    todayAppointments,
-    upcomingAppointments,
-    statusMetrics,
-    doctorWorkload,
-    alerts,
-  } = data;
-
-  return (
-    <PageContainer
-      title="Dashboard"
-      description="Visão operacional da clínica."
-    >
-      <div className="space-y-8">
-        <header className="flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
-          <div>
-            <p className="text-sm text-slate-500">
-              {formatDashboardDate(new Date())}
-            </p>
-
-            <h2 className="mt-1 text-xl font-semibold tracking-tight text-slate-900">
-              Visão geral da operação
-            </h2>
-          </div>
-        </header>
-
-        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
-          <DashboardStatCard
-            title="Consultas hoje"
-            value={summary.appointmentsToday}
-            description="Agenda clínica de hoje"
-            icon={CalendarCheck}
-          />
-
-          <DashboardStatCard
-            title="Pacientes"
-            value={summary.totalPatients}
-            description="Pacientes registados"
-            icon={UserRound}
-          />
-
-          <DashboardStatCard
-            title="Médicos ativos"
-            value={summary.activeDoctors}
-            description="Profissionais disponíveis"
-            icon={Stethoscope}
-          />
-
-          <DashboardStatCard
-            title="Marcações no mês"
-            value={summary.monthlyAppointments}
-            description="Volume mensal"
-            icon={CalendarDays}
-          />
-
-          <DashboardStatCard
-            title="Receita prevista"
-            value={formatCurrency(summary.monthlyExpectedRevenue)}
-            description="Marcações válidas do mês"
-            icon={TrendingUp}
-          />
-
-          <DashboardStatCard
-            title="Cancelamentos"
-            value={`${summary.cancellationRate}%`}
-            description="Taxa mensal"
-            icon={XCircle}
-          />
-        </section>
-
-        <DashboardAlerts alerts={alerts} />
-
-        <div className="grid gap-6 xl:grid-cols-[1.6fr_1fr]">
-          <TodayAppointments appointments={todayAppointments} />
-
-          <UpcomingAppointments appointments={upcomingAppointments} />
-        </div>
-
-        <div className="grid gap-6 xl:grid-cols-2">
-          <AppointmentStatusPanel metrics={statusMetrics} />
-
-          <DoctorWorkload doctors={doctorWorkload} />
-        </div>
-      </div>
-    </PageContainer>
-  );
-}
- */
-
 import { Link } from "react-router-dom";
 import {
   Activity,
@@ -170,30 +14,19 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Cell,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
-import PageContainer from "../../components/PageContainer";
+import { paths } from "../../app/router/Paths";
+import { useDashboard } from "../../hooks/useDashboard";
+import { useAuth } from "../../stores/useAuth";
+
 import { DashboardAlerts } from "../../components/dashboard/DashboardAlert";
+import { DashboardAnalyticsCharts } from "../../components/dashboard/DashboardAnalyticsCharts";
 import { TodayAppointments } from "../../components/dashboard/TodayAppointment";
 import { UpcomingAppointments } from "../../components/dashboard/UpcomingAppointments";
-import { useDashboard } from "../../hooks/useDashboard";
-
-import { DashboardAnalyticsCharts } from "../../components/dashboard/DashboardAnalyticsCharts";
 
 import type {
   AppointmentStatusMetric,
-  DashboardAppointment,
   DoctorWorkloadItem,
 } from "../../types/dashboard.types";
 
@@ -202,283 +35,158 @@ import {
   formatDashboardDate,
 } from "../../utils/dashboard.utils";
 
-// ============================================================
-// DESIGN SYSTEM
-// ============================================================
-
-const COLORS = {
-  blue: "#2563eb",
-  lightBlue: "#93c5fd",
-  green: "#10b981",
-  orange: "#f59e0b",
-  red: "#ef4444",
-  violet: "#8b5cf6",
-  slate: "#64748b",
-};
-
-const STATUS_COLORS: Record<string, string> = {
-  SCHEDULED: COLORS.blue,
-  CONFIRMED: COLORS.green,
-  IN_PROGRESS: COLORS.orange,
-  COMPLETED: "#059669",
-  CANCELLED: COLORS.red,
-  NO_SHOW: COLORS.slate,
-  RESCHEDULED: COLORS.violet,
-};
-
 const numberFormatter = new Intl.NumberFormat("pt-PT");
 
-// ============================================================
-// SHARED COMPONENTS
-// ============================================================
+const STATUS_COLORS: Record<string, string> = {
+  SCHEDULED: "#3b82f6",
+  CONFIRMED: "#10b981",
+  IN_PROGRESS: "#f59e0b",
+  COMPLETED: "#059669",
+  CANCELLED: "#ef4444",
+  NO_SHOW: "#94a3b8",
+  RESCHEDULED: "#8b5cf6",
+};
 
-type MetricCardProps = {
+type MetricColor = "blue" | "green" | "amber" | "red";
+
+interface MetricCardProps {
   title: string;
   value: string | number;
-  subtitle: string;
+  description: string;
   icon: LucideIcon;
-  color: "blue" | "green" | "orange" | "red";
-};
+  color: MetricColor;
+}
 
-const metricColors = {
-  blue: "bg-blue-50 text-blue-600",
-  green: "bg-emerald-50 text-emerald-600",
-  orange: "bg-orange-50 text-orange-600",
-  red: "bg-red-50 text-red-600",
-};
+const metricStyles: Record<MetricColor, { background: string; icon: string }> =
+  {
+    blue: {
+      background: "bg-blue-50",
+      icon: "text-blue-600",
+    },
+    green: {
+      background: "bg-emerald-50",
+      icon: "text-emerald-600",
+    },
+    amber: {
+      background: "bg-amber-50",
+      icon: "text-amber-600",
+    },
+    red: {
+      background: "bg-red-50",
+      icon: "text-red-600",
+    },
+  };
 
 function MetricCard({
   title,
   value,
-  subtitle,
+  description,
   icon: Icon,
   color,
 }: MetricCardProps) {
+  const styles = metricStyles[color];
+
   return (
-    <article className="min-w-0 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+    <article className="min-w-0 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
       <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0 flex-1">
-          <p className="text-xs font-medium text-slate-500 sm:text-sm">
-            {title}
-          </p>
-
-          <p className="mt-3 break-words text-2xl font-bold tracking-tight text-slate-900">
-            {value}
-          </p>
+        <div
+          className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${styles.background}`}
+        >
+          <Icon
+            className={`h-6 w-6 ${styles.icon}`}
+            strokeWidth={1.8}
+            aria-hidden="true"
+          />
         </div>
 
-        <div className={`shrink-0 rounded-xl p-3 ${metricColors[color]}`}>
-          <Icon className="h-5 w-5" aria-hidden="true" />
-        </div>
+        <span className="rounded-full bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-500">
+          Atual
+        </span>
       </div>
 
-      <p className="mt-4 text-xs leading-5 text-slate-500">{subtitle}</p>
+      <p className="mt-5 text-sm font-medium text-slate-500">{title}</p>
+
+      <p className="mt-1 break-words text-2xl font-extrabold tracking-tight text-[#0B1F44] xl:text-3xl">
+        {value}
+      </p>
+
+      <p className="mt-3 text-xs leading-5 text-slate-500">{description}</p>
     </article>
   );
 }
 
-type PanelProps = {
+interface PanelProps {
   title: string;
-  subtitle: string;
-  children: React.ReactNode;
+  description?: string;
   action?: {
     label: string;
     to: string;
   };
-};
+  children: React.ReactNode;
+}
 
-function Panel({ title, subtitle, children, action }: PanelProps) {
+function Panel({ title, description, action, children }: PanelProps) {
   return (
-    <section className="min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-100 px-5 py-5">
-        <div>
-          <h2 className="text-sm font-bold text-slate-900 sm:text-base">
+    <section className="min-w-0 overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-4 sm:px-6">
+        <div className="min-w-0">
+          <h2 className="text-base font-bold tracking-tight text-[#0B1F44]">
             {title}
           </h2>
 
-          <p className="mt-1 text-xs text-slate-500">{subtitle}</p>
+          {description && (
+            <p className="mt-1 text-xs text-slate-500">{description}</p>
+          )}
         </div>
 
         {action && (
           <Link
             to={action.to}
-            className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 transition hover:text-blue-800"
           >
             {action.label}
-            <ArrowRight className="h-3.5 w-3.5" />
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Link>
         )}
       </div>
 
-      <div className="p-5">{children}</div>
+      <div className="p-5 sm:p-6">{children}</div>
     </section>
   );
 }
 
-function EmptyChart({
-  message = "Ainda não existem dados para apresentar.",
+function StatusDistribution({
+  metrics,
 }: {
-  message?: string;
+  metrics: AppointmentStatusMetric[];
 }) {
-  return (
-    <div className="flex h-64 flex-col items-center justify-center gap-3 text-center">
-      <Activity className="h-9 w-9 text-slate-300" />
-
-      <p className="max-w-xs text-sm text-slate-500">{message}</p>
-    </div>
-  );
-}
-
-// ============================================================
-// CHART 1 — CONSULTAS POR HORA
-// ============================================================
-
-function AppointmentsChart({
-  appointments,
-}: {
-  appointments: DashboardAppointment[];
-}) {
-  const hours = Array.from({ length: 12 }, (_, index) => index + 7);
-
-  const chartData = hours.map((hour) => {
-    const appointmentsAtHour = appointments.filter(
-      (appointment) => Number(appointment.startTime.split(":")[0]) === hour,
-    );
-
-    return {
-      hour: `${String(hour).padStart(2, "0")}h`,
-      active: appointmentsAtHour.filter(
-        (appointment) =>
-          appointment.status !== "CANCELLED" &&
-          appointment.status !== "NO_SHOW",
-      ).length,
-      cancelled: appointmentsAtHour.filter(
-        (appointment) => appointment.status === "CANCELLED",
-      ).length,
-    };
-  });
-
-  const hasData = chartData.some(
-    (item) => item.active > 0 || item.cancelled > 0,
-  );
-
-  return (
-    <Panel
-      title="Atividade das marcações"
-      subtitle="Distribuição das consultas por hora, hoje"
-      action={{
-        label: "Ver agenda",
-        to: "/appointments",
-      }}
-    >
-      <div className="mb-5 flex flex-wrap items-center gap-5 text-xs text-slate-600">
-        <div className="flex items-center gap-2">
-          <span className="h-2.5 w-2.5 rounded-sm bg-blue-600" />
-          Marcações ativas
-        </div>
-
-        <div className="flex items-center gap-2">
-          <span className="h-2.5 w-2.5 rounded-sm bg-red-300" />
-          Canceladas
-        </div>
-      </div>
-
-      {!hasData ? (
-        <EmptyChart message="Não existem consultas registadas para hoje." />
-      ) : (
-        <div className="h-64 w-full sm:h-72">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={chartData}
-              margin={{
-                top: 8,
-                right: 4,
-                left: -25,
-                bottom: 0,
-              }}
-              barGap={2}
-            >
-              <CartesianGrid
-                vertical={false}
-                stroke="#e2e8f0"
-                strokeDasharray="3 3"
-              />
-
-              <XAxis
-                dataKey="hour"
-                axisLine={false}
-                tickLine={false}
-                tick={{ fontSize: 10, fill: "#64748b" }}
-              />
-
-              <YAxis
-                allowDecimals={false}
-                axisLine={false}
-                tickLine={false}
-                tick={{ fontSize: 11, fill: "#64748b" }}
-              />
-
-              <Tooltip
-                cursor={{ fill: "#f1f5f9" }}
-                formatter={(value, name) => [
-                  Number(value ?? 0),
-                  name === "active" ? "Marcações ativas" : "Canceladas",
-                ]}
-              />
-
-              <Bar
-                dataKey="active"
-                fill={COLORS.blue}
-                radius={[4, 4, 0, 0]}
-                maxBarSize={24}
-              />
-
-              <Bar
-                dataKey="cancelled"
-                fill="#fca5a5"
-                radius={[4, 4, 0, 0]}
-                maxBarSize={24}
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      )}
-    </Panel>
-  );
-}
-
-// ============================================================
-// CHART 2 — DISTRIBUIÇÃO POR ESTADO
-// ============================================================
-
-function StatusChart({ metrics }: { metrics: AppointmentStatusMetric[] }) {
   const total = metrics.reduce((sum, item) => sum + item.count, 0);
 
   return (
     <Panel
-      title="Distribuição de marcações"
-      subtitle="Estados das consultas no mês atual"
+      title="Distribuição das marcações"
+      description="Estados das marcações no mês atual"
     >
       {total === 0 ? (
-        <EmptyChart />
+        <EmptyState message="Ainda não existem marcações para analisar." />
       ) : (
-        <div className="flex flex-col items-center gap-4 sm:flex-row">
-          <div className="relative h-64 w-full shrink-0 sm:w-1/2">
+        <div className="grid items-center gap-5 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+          <div className="relative mx-auto h-44 w-full max-w-52">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={metrics}
                   dataKey="count"
                   nameKey="label"
-                  innerRadius={65}
-                  outerRadius={93}
+                  innerRadius={48}
+                  outerRadius={68}
                   paddingAngle={2}
                   stroke="none"
                 >
-                  {metrics.map((item) => (
+                  {metrics.map((metric) => (
                     <Cell
-                      key={item.status}
-                      fill={STATUS_COLORS[item.status] ?? COLORS.slate}
+                      key={metric.status}
+                      fill={STATUS_COLORS[metric.status] ?? "#94a3b8"}
                     />
                   ))}
                 </Pie>
@@ -493,18 +201,18 @@ function StatusChart({ metrics }: { metrics: AppointmentStatusMetric[] }) {
             </ResponsiveContainer>
 
             <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-3xl font-bold text-slate-900">
+              <strong className="text-2xl font-extrabold text-[#0B1F44]">
                 {numberFormatter.format(total)}
-              </span>
+              </strong>
 
               <span className="text-xs text-slate-500">Marcações</span>
             </div>
           </div>
 
-          <div className="w-full flex-1 space-y-3">
-            {metrics.map((item) => (
+          <div className="space-y-3">
+            {metrics.map((metric) => (
               <div
-                key={item.status}
+                key={metric.status}
                 className="flex items-center justify-between gap-3"
               >
                 <div className="flex min-w-0 items-center gap-2">
@@ -512,22 +220,18 @@ function StatusChart({ metrics }: { metrics: AppointmentStatusMetric[] }) {
                     className="h-2.5 w-2.5 shrink-0 rounded-full"
                     style={{
                       backgroundColor:
-                        STATUS_COLORS[item.status] ?? COLORS.slate,
+                        STATUS_COLORS[metric.status] ?? "#94a3b8",
                     }}
                   />
 
                   <span className="truncate text-xs text-slate-600">
-                    {item.label}
+                    {metric.label}
                   </span>
                 </div>
 
-                <div className="flex shrink-0 items-center gap-2">
-                  <span className="text-xs font-semibold text-slate-900">
-                    {item.percentage}%
-                  </span>
-
-                  <span className="text-xs text-slate-400">{item.count}</span>
-                </div>
+                <span className="shrink-0 text-xs font-bold text-slate-800">
+                  {metric.percentage}%
+                </span>
               </div>
             ))}
           </div>
@@ -537,71 +241,49 @@ function StatusChart({ metrics }: { metrics: AppointmentStatusMetric[] }) {
   );
 }
 
-// ============================================================
-// CHART 3 — CARGA DE TRABALHO
-// ============================================================
-
-function WorkloadChart({ doctors }: { doctors: DoctorWorkloadItem[] }) {
-  const chartData = [...doctors]
+function DoctorWorkloadPanel({ doctors }: { doctors: DoctorWorkloadItem[] }) {
+  const topDoctors = [...doctors]
     .sort((a, b) => b.appointmentsThisMonth - a.appointmentsThisMonth)
-    .slice(0, 5)
-    .map((doctor) => ({
-      id: doctor.doctorId,
-      name: doctor.doctorName,
-      appointments: doctor.appointmentsThisMonth,
-    }));
+    .slice(0, 5);
 
-  const maxAppointments = Math.max(
+  const maximum = Math.max(
     1,
-    ...chartData.map((doctor) => doctor.appointments),
+    ...topDoctors.map((doctor) => doctor.appointmentsThisMonth),
   );
 
   return (
     <Panel
-      title="Carga de trabalho dos médicos"
-      subtitle="Marcações por médico no mês atual"
+      title="Atividade por médico"
+      description="Marcações por profissional neste mês"
       action={{
         label: "Ver médicos",
-        to: "/doctors",
+        to: paths.app.doctors,
       }}
     >
-      {chartData.length === 0 ? (
-        <EmptyChart message="Ainda não existem médicos ativos." />
+      {topDoctors.length === 0 ? (
+        <EmptyState message="Ainda não existem dados de atividade médica." />
       ) : (
-        <div className="space-y-6 py-2">
-          {chartData.map((doctor, index) => {
-            const percentage = (doctor.appointments / maxAppointments) * 100;
+        <div className="space-y-5">
+          {topDoctors.map((doctor) => {
+            const percentage = (doctor.appointmentsThisMonth / maximum) * 100;
 
             return (
-              <div key={doctor.id}>
+              <div key={doctor.doctorId}>
                 <div className="mb-2 flex items-center justify-between gap-3">
-                  <div className="flex min-w-0 items-center gap-3">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-50 text-xs font-bold text-blue-700">
-                      {doctor.name
-                        .split(" ")
-                        .slice(0, 2)
-                        .map((part) => part.charAt(0))
-                        .join("")
-                        .toUpperCase()}
-                    </div>
+                  <span className="truncate text-xs font-medium text-slate-700">
+                    {doctor.doctorName}
+                  </span>
 
-                    <span className="truncate text-xs font-semibold text-slate-700">
-                      {doctor.name}
-                    </span>
-                  </div>
-
-                  <span className="shrink-0 text-xs font-bold text-slate-900">
-                    {doctor.appointments}
+                  <span className="text-xs font-bold text-[#0B1F44]">
+                    {doctor.appointmentsThisMonth}
                   </span>
                 </div>
 
                 <div className="h-2.5 overflow-hidden rounded-full bg-slate-100">
                   <div
-                    className="h-full rounded-full transition-all duration-500"
+                    className="h-full rounded-full bg-gradient-to-r from-blue-400 to-blue-600"
                     style={{
                       width: `${percentage}%`,
-                      backgroundColor:
-                        index === 0 ? COLORS.blue : COLORS.lightBlue,
                     }}
                   />
                 </div>
@@ -609,9 +291,8 @@ function WorkloadChart({ doctors }: { doctors: DoctorWorkloadItem[] }) {
             );
           })}
 
-          <p className="pt-2 text-xs text-slate-400">
-            As barras representam o volume relativo ao médico com mais
-            marcações, não a taxa de ocupação da agenda.
+          <p className="text-xs leading-5 text-slate-400">
+            Comparação relativa ao profissional com maior número de marcações.
           </p>
         </div>
       )}
@@ -619,79 +300,124 @@ function WorkloadChart({ doctors }: { doctors: DoctorWorkloadItem[] }) {
   );
 }
 
-//
-// LOADING / ERROR
-//
-
-function DashboardLoading() {
+function EmptyState({ message }: { message: string }) {
   return (
-    <div role="status" className="animate-pulse space-y-6">
-      <div className="h-20 rounded-2xl bg-slate-100" />
+    <div className="flex min-h-48 flex-col items-center justify-center gap-3 text-center">
+      <Activity className="h-8 w-8 text-slate-300" aria-hidden="true" />
 
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 2xl:grid-cols-6">
-        {Array.from({ length: 6 }, (_, index) => (
-          <div key={index} className="h-36 rounded-2xl bg-slate-100" />
-        ))}
-      </div>
-
-      <div className="grid gap-5 lg:grid-cols-3">
-        {Array.from({ length: 3 }, (_, index) => (
-          <div key={index} className="h-96 rounded-2xl bg-slate-100" />
-        ))}
-      </div>
-
-      <span className="sr-only">A carregar dashboard...</span>
+      <p className="max-w-xs text-sm text-slate-500">{message}</p>
     </div>
   );
 }
 
-//
-// MAIN DASHBOARD
-//
+function DashboardLoading() {
+  return (
+    <div role="status" className="animate-pulse space-y-6">
+      <div className="h-24 rounded-2xl bg-slate-200/60" />
+
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {Array.from({ length: 4 }, (_, index) => (
+          <div key={index} className="h-44 rounded-2xl bg-slate-200/60" />
+        ))}
+      </div>
+
+      <div className="grid gap-5 xl:grid-cols-2">
+        <div className="h-96 rounded-2xl bg-slate-200/60" />
+        <div className="h-96 rounded-2xl bg-slate-200/60" />
+      </div>
+
+      <span className="sr-only">A carregar Dashboard...</span>
+    </div>
+  );
+}
+
+function QuickActions() {
+  const actions = [
+    {
+      label: "Gerir marcações",
+      to: paths.app.appointments,
+      icon: CalendarDays,
+    },
+    {
+      label: "Consultar pacientes",
+      to: paths.app.patients,
+      icon: Users,
+    },
+    {
+      label: "Equipa médica",
+      to: paths.app.doctors,
+      icon: Stethoscope,
+    },
+  ];
+
+  return (
+    <Panel
+      title="Acessos rápidos"
+      description="Principais áreas de gestão clínica"
+    >
+      <div className="space-y-3">
+        {actions.map((action) => {
+          const Icon = action.icon;
+
+          return (
+            <Link
+              key={action.to}
+              to={action.to}
+              className="group flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50 px-4 py-3.5 transition hover:border-blue-100 hover:bg-blue-50"
+            >
+              <span className="flex items-center gap-3 text-sm font-medium text-slate-700 group-hover:text-blue-700">
+                <Icon className="h-4 w-4 text-blue-600" aria-hidden="true" />
+                {action.label}
+              </span>
+
+              <ArrowRight
+                className="h-4 w-4 text-slate-400 group-hover:text-blue-600"
+                aria-hidden="true"
+              />
+            </Link>
+          );
+        })}
+      </div>
+    </Panel>
+  );
+}
 
 export default function DashboardPage() {
+  const { user } = useAuth();
+
   const { data, isLoading, isError, isFetching, refetch } = useDashboard();
 
   if (isLoading) {
-    return (
-      <PageContainer
-        title="Dashboard"
-        description="Visão geral da atividade da clínica."
-      >
-        <DashboardLoading />
-      </PageContainer>
-    );
+    return <DashboardLoading />;
   }
 
   if (isError || !data) {
     return (
-      <PageContainer
-        title="Dashboard"
-        description="Visão geral da atividade da clínica."
+      <div
+        role="alert"
+        className="rounded-2xl border border-red-100 bg-white px-6 py-12 text-center shadow-sm"
       >
-        <div
-          role="alert"
-          className="rounded-2xl border border-slate-200 bg-white p-10 text-center"
+        <CircleAlert
+          className="mx-auto h-10 w-10 text-red-500"
+          aria-hidden="true"
+        />
+
+        <h1 className="mt-4 text-xl font-bold text-slate-900">
+          Não foi possível carregar a Dashboard
+        </h1>
+
+        <p className="mt-2 text-sm text-slate-500">
+          Ocorreu um erro ao consultar os dados da clínica.
+        </p>
+
+        <button
+          type="button"
+          onClick={() => void refetch()}
+          className="mt-6 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700"
         >
-          <CircleAlert className="mx-auto h-10 w-10 text-red-500" />
-
-          <h2 className="mt-4 text-lg font-semibold text-slate-900">
-            Não foi possível carregar a Dashboard
-          </h2>
-
-          <p className="mt-2 text-sm text-slate-500">
-            Ocorreu um erro ao consultar os dados da clínica.
-          </p>
-
-          <button
-            type="button"
-            onClick={() => void refetch()}
-            className="mt-6 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
-          >
-            Tentar novamente
-          </button>
-        </div>
-      </PageContainer>
+          Tentar novamente
+        </button>
+      </div>
     );
   }
 
@@ -706,212 +432,150 @@ export default function DashboardPage() {
     monthlyRevenue,
   } = data;
 
+  const firstName = user?.name?.trim().split(/\s+/)[0];
+
   const metrics: MetricCardProps[] = [
     {
       title: "Consultas hoje",
       value: numberFormatter.format(summary.appointmentsToday),
-      subtitle: "Agenda clínica de hoje",
+      description: "Marcações registadas para hoje",
       icon: CalendarCheck2,
       color: "blue",
     },
     {
-      title: "Pacientes",
+      title: "Pacientes registados",
       value: numberFormatter.format(summary.totalPatients),
-      subtitle: "Total de pacientes registados",
+      description: "Total de pacientes da clínica",
       icon: Users,
-      color: "blue",
-    },
-    {
-      title: "Médicos ativos",
-      value: numberFormatter.format(summary.activeDoctors),
-      subtitle: "Profissionais disponíveis",
-      icon: Stethoscope,
-      color: "blue",
-    },
-    {
-      title: "Marcações no mês",
-      value: numberFormatter.format(summary.monthlyAppointments),
-      subtitle: "Total de marcações mensais",
-      icon: CalendarDays,
-      color: "blue",
+      color: "green",
     },
     {
       title: "Receita prevista",
       value: formatCurrency(summary.monthlyExpectedRevenue),
-      subtitle: "Estimativa do mês atual",
+      description: "Estimativa para o mês atual",
       icon: TrendingUp,
-      color: "orange",
+      color: "amber",
     },
     {
-      title: "Cancelamentos",
+      title: "Taxa de cancelamento",
       value: `${summary.cancellationRate}%`,
-      subtitle: "Taxa mensal de cancelamento",
+      description: "Cancelamentos no mês atual",
       icon: XCircle,
       color: "red",
     },
   ];
 
   return (
-    <PageContainer
-      title="Dashboard"
-      description="Visão geral da atividade da clínica."
-    >
-      <div className="space-y-6 pb-8">
-        {/* WELCOME HEADER */}
+    <div className="min-w-0 space-y-6 pb-8">
+      {/* WELCOME HEADER */}
+      <header className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+          <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.18em] text-blue-600">
+            Dashboard / Visão geral
+          </p>
 
-        {/* SIX KPI CARDS */}
+          <h1 className="text-2xl font-extrabold tracking-tight text-[#0B1F44] sm:text-3xl">
+            Olá, {firstName ?? "Utilizador"}
+          </h1>
 
-        <section
-          aria-label="Indicadores principais"
-          className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6"
-        >
-          {metrics.map((metric) => (
-            <MetricCard key={metric.title} {...metric} />
-          ))}
-        </section>
+          <p className="mt-2 text-sm text-slate-500">
+            Aqui está um resumo da atividade da sua clínica hoje.
+          </p>
+        </div>
 
-        {/* GRÁFICOS HISTÓRICOS */}
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-xs font-medium text-slate-600 shadow-sm">
+            <CalendarDays
+              className="h-4 w-4 text-blue-600"
+              aria-hidden="true"
+            />
 
-        <DashboardAnalyticsCharts
-          activity={monthlyActivity}
-          revenue={monthlyRevenue}
-        />
-
-        {/* RESTANTES GRÁFICOS */}
-
-        <section
-          aria-label="Análise de atividade"
-          className="grid gap-5 xl:grid-cols-2 2xl:grid-cols-3"
-        >
-          <AppointmentsChart appointments={todayAppointments} />
-          <StatusChart metrics={statusMetrics} />
-          <WorkloadChart doctors={doctorWorkload} />
-        </section>
-
-        <header className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-              Visão geral da clínica
-              <span className="ml-2">☀️</span>
-            </h2>
-
-            <p className="mt-2 text-sm text-slate-500">
-              Aqui está o resumo da atividade da tua clínica.
-            </p>
+            {formatDashboardDate(new Date())}
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-600">
-              <CalendarDays className="h-4 w-4 text-blue-600" />
-              {formatDashboardDate(new Date())}
-            </div>
-
-            <button
-              type="button"
-              onClick={() => void refetch()}
-              disabled={isFetching}
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:opacity-50"
-            >
-              <RefreshCw
-                className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`}
-              />
-              Atualizar
-            </button>
-          </div>
-        </header>
-
-        {/* SIX KPI CARDS */}
-
-        <section
-          aria-label="Indicadores principais"
-          className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6"
-        >
-          {metrics.map((metric) => (
-            <MetricCard key={metric.title} {...metric} />
-          ))}
-        </section>
-
-        {/* THREE CHARTS */}
-
-        <section
-          aria-label="Análise de atividade"
-          className="grid gap-5 xl:grid-cols-2 2xl:grid-cols-3"
-        >
-          <AppointmentsChart appointments={todayAppointments} />
-
-          <StatusChart metrics={statusMetrics} />
-
-          <WorkloadChart doctors={doctorWorkload} />
-        </section>
-
-        {/* APPOINTMENT TABLES */}
-
-        <section
-          aria-label="Agenda clínica"
-          className="grid gap-5 xl:grid-cols-[1.4fr_1fr]"
-        >
-          <TodayAppointments appointments={todayAppointments} />
-
-          <UpcomingAppointments appointments={upcomingAppointments} />
-        </section>
-
-        {/* ALERTS AND QUICK ACTIONS */}
-
-        <section className="grid gap-5 xl:grid-cols-[1.4fr_1fr]">
-          <DashboardAlerts alerts={alerts} />
-
-          <Panel
-            title="Acessos rápidos"
-            subtitle="Principais áreas de gestão clínica"
+          <button
+            type="button"
+            onClick={() => void refetch()}
+            disabled={isFetching}
+            aria-label="Atualizar dados da Dashboard"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition hover:bg-slate-50 disabled:opacity-50"
           >
-            <div className="space-y-3">
-              <Link
-                to="/appointments"
-                className="flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-blue-50 hover:text-blue-700"
-              >
-                <span className="flex items-center gap-3">
-                  <CalendarDays className="h-4 w-4" />
-                  Gerir marcações
-                </span>
-                <ArrowRight className="h-4 w-4" />
-              </Link>
+            <RefreshCw
+              className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`}
+              aria-hidden="true"
+            />
+          </button>
+        </div>
+      </header>
 
-              <Link
-                to="/patients"
-                className="flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-blue-50 hover:text-blue-700"
-              >
-                <span className="flex items-center gap-3">
-                  <Users className="h-4 w-4" />
-                  Gerir pacientes
-                </span>
-                <ArrowRight className="h-4 w-4" />
-              </Link>
+      {/* FOUR KPI CARDS */}
+      <section
+        aria-label="Indicadores principais"
+        className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4"
+      >
+        {metrics.map((metric) => (
+          <MetricCard key={metric.title} {...metric} />
+        ))}
+      </section>
 
-              <Link
-                to="/doctors"
-                className="flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-blue-50 hover:text-blue-700"
-              >
-                <span className="flex items-center gap-3">
-                  <Stethoscope className="h-4 w-4" />
-                  Gerir médicos
-                </span>
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-          </Panel>
-        </section>
+      {/* MAIN DASHBOARD */}
+      <section
+        aria-label="Agenda e análise mensal"
+        className="grid min-w-0 items-stretch gap-5 xl:grid-cols-2"
+      >
+        {/* COLUNA ESQUERDA */}
+        <div className="grid min-w-0 grid-rows-2 gap-5">
+          <div className="min-h-0 [&>section]:h-full">
+            <TodayAppointments appointments={todayAppointments} />
+          </div>
 
-        {/* FOOTER */}
+          <div className="min-h-0 [&>section]:h-full">
+            <UpcomingAppointments appointments={upcomingAppointments} />
+          </div>
+        </div>
 
-        <footer className="flex flex-col justify-between gap-2 border-t border-slate-200 pt-5 text-xs text-slate-400 sm:flex-row">
-          <span>Clinic SaaS · Painel de gestão clínica</span>
+        {/* COLUNA DIREITA */}
+        <div className="min-w-0">
+          <DashboardAnalyticsCharts
+            activity={monthlyActivity}
+            revenue={monthlyRevenue}
+          />
+        </div>
+      </section>
 
-          <span className="flex items-center gap-2">
-            <Clock3 className="h-3.5 w-3.5" />
-            Dados provenientes da Fake API local
-          </span>
-        </footer>
-      </div>
-    </PageContainer>
+      {/* ANALYTICS */}
+      <section
+        aria-label="Indicadores operacionais"
+        className="grid min-w-0 items-start gap-5 xl:grid-cols-2"
+      >
+        <div className="[&>section>div:last-child]:py-4">
+          <StatusDistribution metrics={statusMetrics} />
+        </div>
+
+        <div className="[&>section>div:last-child]:py-4">
+          <DoctorWorkloadPanel doctors={doctorWorkload} />
+        </div>
+      </section>
+
+      {/* OPERATIONS */}
+      <section
+        aria-label="Alertas e navegação"
+        className="grid min-w-0 gap-5 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]"
+      >
+        <DashboardAlerts alerts={alerts} />
+
+        <QuickActions />
+      </section>
+
+      {/* FOOTER */}
+      <footer className="flex flex-col justify-between gap-2 border-t border-slate-200 pt-5 text-xs text-slate-400 sm:flex-row">
+        <span>LC ClinicSaaS · Painel de gestão clínica</span>
+
+        <span className="flex items-center gap-2">
+          <Clock3 className="h-3.5 w-3.5" aria-hidden="true" />
+          Dados da Fake API local
+        </span>
+      </footer>
+    </div>
   );
 }

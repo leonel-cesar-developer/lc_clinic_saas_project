@@ -1,4 +1,3 @@
-
 import { useState, type FormEvent } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -12,7 +11,7 @@ import {
 } from "lucide-react";
 
 import { paths } from "../../app/router/Paths";
-import { useAuth } from "../../stores/auth.store";
+import { useAuth } from "../../stores/useAuth";
 
 interface LocationState {
   from?: string;
@@ -35,8 +34,7 @@ export default function LoginPage() {
 
   const locationState = location.state as LocationState | null;
 
-  const redirectPath =
-    locationState?.from ?? paths.app.dashboard;
+  const redirectPath = locationState?.from ?? paths.app.dashboard;
 
   async function handleSubmit(
     event: FormEvent<HTMLFormElement>,
@@ -100,10 +98,7 @@ export default function LoginPage() {
           <div className="flex min-h-0 flex-1 flex-col justify-center py-8 lg:py-6">
             <div className="mb-9">
               <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700">
-                <ShieldCheck
-                  className="h-4 w-4"
-                  aria-hidden="true"
-                />
+                <ShieldCheck className="h-4 w-4" aria-hidden="true" />
                 Área de acesso reservado
               </div>
 
@@ -112,15 +107,12 @@ export default function LoginPage() {
               </h1>
 
               <p className="mt-3 text-sm leading-6 text-slate-500 sm:text-base">
-                Aceda à sua conta para continuar a gerir
-                a sua clínica com segurança.
+                Aceda à sua conta para continuar a gerir a sua clínica com
+                segurança.
               </p>
             </div>
 
-            <form
-              onSubmit={handleSubmit}
-              className="space-y-5"
-            >
+            <form onSubmit={handleSubmit} className="space-y-5">
               {/* EMAIL */}
               <div>
                 <label
@@ -144,9 +136,7 @@ export default function LoginPage() {
                     autoComplete="email"
                     placeholder="seuemail@clinica.pt"
                     value={email}
-                    onChange={(event) =>
-                      setEmail(event.target.value)
-                    }
+                    onChange={(event) => setEmail(event.target.value)}
                     disabled={isSubmitting}
                     className="h-13 w-full rounded-xl border border-slate-200 bg-[#F8FAFD] pl-12 pr-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 hover:border-slate-300 focus:border-[#0873D7] focus:bg-white focus:ring-4 focus:ring-blue-100 disabled:opacity-60"
                   />
@@ -176,18 +166,14 @@ export default function LoginPage() {
                     autoComplete="current-password"
                     placeholder="Introduza a sua palavra-passe"
                     value={password}
-                    onChange={(event) =>
-                      setPassword(event.target.value)
-                    }
+                    onChange={(event) => setPassword(event.target.value)}
                     disabled={isSubmitting}
                     className="h-13 w-full rounded-xl border border-slate-200 bg-[#F8FAFD] pl-12 pr-12 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 hover:border-slate-300 focus:border-[#0873D7] focus:bg-white focus:ring-4 focus:ring-blue-100 disabled:opacity-60"
                   />
 
                   <button
                     type="button"
-                    onClick={() =>
-                      setShowPassword((current) => !current)
-                    }
+                    onClick={() => setShowPassword((current) => !current)}
                     aria-label={
                       showPassword
                         ? "Ocultar palavra-passe"
@@ -202,10 +188,7 @@ export default function LoginPage() {
                         aria-hidden="true"
                       />
                     ) : (
-                      <Eye
-                        className="h-[19px] w-[19px]"
-                        aria-hidden="true"
-                      />
+                      <Eye className="h-[19px] w-[19px]" aria-hidden="true" />
                     )}
                   </button>
                 </div>
@@ -255,8 +238,8 @@ export default function LoginPage() {
               />
 
               <p className="text-xs leading-5 text-slate-500">
-                Acesso reservado a utilizadores autorizados
-                da plataforma LC ClinicSaaS.
+                Acesso reservado a utilizadores autorizados da plataforma LC
+                ClinicSaaS.
               </p>
             </div>
           </div>
@@ -264,8 +247,8 @@ export default function LoginPage() {
           {/* FOOTER */}
           <footer className="border-t border-slate-100 pt-5">
             <p className="text-center text-xs text-slate-400">
-              © {new Date().getFullYear()} LC ClinicSaaS.
-              Todos os direitos reservados.
+              © {new Date().getFullYear()} LC ClinicSaaS. Todos os direitos
+              reservados.
             </p>
           </footer>
         </section>
@@ -283,10 +266,7 @@ export default function LoginPage() {
 
           {/* TOP BADGE */}
           <div className="absolute left-10 top-10 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/15 px-4 py-2 text-xs font-semibold text-white backdrop-blur-md">
-            <HeartPulse
-              className="h-4 w-4"
-              aria-hidden="true"
-            />
+            <HeartPulse className="h-4 w-4" aria-hidden="true" />
             Tecnologia para cuidar melhor
           </div>
 
@@ -301,8 +281,8 @@ export default function LoginPage() {
             </h2>
 
             <p className="mt-5 max-w-md text-sm leading-7 text-blue-50/90">
-              Gestão clínica simples, moderna e eficiente.
-              Mais tempo para cuidar de quem realmente importa.
+              Gestão clínica simples, moderna e eficiente. Mais tempo para
+              cuidar de quem realmente importa.
             </p>
 
             <div className="mt-8 flex items-center gap-3 border-t border-white/20 pt-6">
