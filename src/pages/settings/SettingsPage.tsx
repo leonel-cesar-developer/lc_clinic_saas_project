@@ -1,25 +1,3 @@
-/* import PageContainer from "../../components/PageContainer";
-
-export default function SettingsPage() {
-  return (
-    <PageContainer
-      title="Definições"
-      description="Configure as preferências da aplicação."
-    >
-      <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h2 className="font-semibold text-slate-900">
-          Preferências gerais
-        </h2>
-
-        <p className="mt-2 text-sm text-slate-500">
-          Aqui poderás configurar idioma, tema,
-          notificações e dados da clínica.
-        </p>
-      </div>
-    </PageContainer>
-  );
-} */
-
 import {
   Bell,
   Building2,
@@ -199,20 +177,24 @@ export default function SettingsPage() {
                   className={[
                     "flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition",
                     isActive
-                      ? "bg-slate-950 text-white"
-                      : "text-slate-600 hover:bg-slate-50",
+                      ? "bg-blue-600 text-white shadow-sm"
+                      : "text-slate-600 hover:bg-blue-50 hover:text-blue-700",
                   ].join(" ")}
                 >
                   <div
                     className={[
                       "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg",
-                      isActive ? "bg-white/10" : "bg-slate-100",
+                      isActive
+                        ? "bg-white/15"
+                        : "bg-blue-50 group-hover:bg-blue-100",
                     ].join(" ")}
                   >
                     <Icon
                       className={[
                         "h-4 w-4",
-                        isActive ? "text-white" : "text-slate-600",
+                        isActive
+                          ? "text-white"
+                          : "text-blue-600 group-hover:text-blue-700",
                       ].join(" ")}
                     />
                   </div>
@@ -276,7 +258,7 @@ export default function SettingsPage() {
 
               <button
                 type="submit"
-                className="inline-flex items-center gap-2 rounded-xl bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
+                className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700"
               >
                 {saved ? (
                   <Check className="h-4 w-4" />
@@ -725,7 +707,7 @@ function ToggleRow({ title, description, checked, onChange }: ToggleRowProps) {
         onClick={() => onChange(!checked)}
         className={[
           "relative h-6 w-11 shrink-0 rounded-full transition",
-          checked ? "bg-slate-950" : "bg-slate-200",
+          checked ? "bg-blue-600" : "bg-slate-200",
         ].join(" ")}
       >
         <span

@@ -5,9 +5,7 @@ function buildStorageKey(collection: string): string {
   return `${fakeApiConfig.databasePrefix}:${collection}`;
 }
 
-export function readCollection<T>(
-  collection: string,
-): T[] {
+export function readCollection<T>(collection: string): T[] {
   const storageKey = buildStorageKey(collection);
 
   try {
@@ -38,45 +36,48 @@ export function readCollection<T>(
       status: 500,
       message: `Não foi possível ler a coleção "${collection}".`,
       details: {
-        originalError:
-          error instanceof Error
-            ? error.message
-            : String(error),
+        originalError: error instanceof Error ? error.message : String(error),
       },
     });
   }
 }
 
-export function writeCollection<T>(
-  collection: string,
-  data: T[],
-): void {
+export function writeCollection<T>(collection: string, data: T[]): void {
   const storageKey = buildStorageKey(collection);
 
   try {
-    localStorage.setItem(
-      storageKey,
-      JSON.stringify(data),
-    );
+    localStorage.setItem(storageKey, JSON.stringify(data));
   } catch (error) {
     throw new ApiError({
       code: "STORAGE_ERROR",
       status: 500,
       message: `Não foi possível guardar a coleção "${collection}".`,
       details: {
-        originalError:
-          error instanceof Error
-            ? error.message
-            : String(error),
+        originalError: error instanceof Error ? error.message : String(error),
       },
     });
   }
 }
 
-export function removeCollection(
-  collection: string,
-): void {
+/* export function removeCollection(collection: string): void {
   const storageKey = buildStorageKey(collection);
 
   localStorage.removeItem(storageKey);
+} */
+
+export function removeCollection(collection: string): void {
+  const storageKey = buildStorageKey(collection);
+
+  try {
+    localStorage.removeItem(storageKey);
+  } catch (error) {
+    throw new ApiError({
+      code: "STORAGE_ERROR",
+      status: 500,
+      message: `Não foi possível remover a coleção "${collection}".`,
+      details: {
+        originalError: error instanceof Error ? error.message : String(error),
+      },
+    });
+  }
 }

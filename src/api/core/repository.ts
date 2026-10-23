@@ -5,14 +5,9 @@ import type {
   CreateEntityInput,
   UpdateEntityInput,
 } from "./entity.types";
-import {
-  readCollection,
-  writeCollection,
-} from "./local-storage";
-import type {
-  PaginatedResult,
-  QueryOptions,
-} from "./query.types";
+
+import { readCollection, writeCollection } from "./local-storage";
+import type { PaginatedResult, QueryOptions } from "./query.types";
 
 function generateId(): string {
   if (
@@ -22,9 +17,7 @@ function generateId(): string {
     return crypto.randomUUID();
   }
 
-  return `${Date.now()}-${Math.random()
-    .toString(16)
-    .slice(2)}`;
+  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
 function normalizeValue(value: unknown): string {
@@ -39,14 +32,8 @@ function normalizeValue(value: unknown): string {
   return String(value).toLowerCase();
 }
 
-function compareValues(
-  firstValue: unknown,
-  secondValue: unknown,
-): number {
-  if (
-    typeof firstValue === "number" &&
-    typeof secondValue === "number"
-  ) {
+function compareValues(firstValue: unknown, secondValue: unknown): number {
+  if (typeof firstValue === "number" && typeof secondValue === "number") {
     return firstValue - secondValue;
   }
 
@@ -56,38 +43,24 @@ function compareValues(
   return firstString.localeCompare(secondString);
 }
 
-function valuesAreEqual(
-  entityValue: unknown,
-  filterValue: unknown,
-): boolean {
+function valuesAreEqual(entityValue: unknown, filterValue: unknown): boolean {
   if (Array.isArray(filterValue)) {
-    return filterValue.some((value) =>
-      valuesAreEqual(entityValue, value),
-    );
+    return filterValue.some((value) => valuesAreEqual(entityValue, value));
   }
 
-  if (
-    typeof entityValue === "string" &&
-    typeof filterValue === "string"
-  ) {
-    return (
-      entityValue.toLowerCase() ===
-      filterValue.toLowerCase()
-    );
+  if (typeof entityValue === "string" && typeof filterValue === "string") {
+    return entityValue.toLowerCase() === filterValue.toLowerCase();
   }
 
   return entityValue === filterValue;
 }
 
-export class LocalStorageRepository<
-  T extends BaseEntity,
-> {
+export class LocalStorageRepository<T extends BaseEntity> {
+  private readonly collectionName: string;
 
- private readonly collectionName: string;
-
-constructor(collectionName: string) {
-  this.collectionName = collectionName;
-}
+  constructor(collectionName: string) {
+    this.collectionName = collectionName;
+  }
 
   private read(): T[] {
     return readCollection<T>(this.collectionName);
@@ -97,9 +70,7 @@ constructor(collectionName: string) {
     writeCollection(this.collectionName, data);
   }
 
-  async getAll(
-    options: QueryOptions<T> = {},
-  ): Promise<PaginatedResult<T>> {
+  async getAll(options: QueryOptions<T> = {}): Promise<PaginatedResult<T>> {
     await simulateNetworkDelay();
 
     const {
@@ -118,42 +89,32 @@ constructor(collectionName: string) {
     let records = [...this.read()];
 
     if (search?.trim() && searchFields.length > 0) {
-      const normalizedSearch = search
-        .trim()
-        .toLowerCase();
+      const normalizedSearch = search.trim().toLowerCase();
 
       records = records.filter((record) =>
         searchFields.some((field) => {
           const fieldValue = record[field];
 
-          return normalizeValue(fieldValue).includes(
-            normalizedSearch,
-          );
+          return normalizeValue(fieldValue).includes(normalizedSearch);
         }),
       );
     }
 
     if (filters) {
       records = records.filter((record) =>
-        Object.entries(filters).every(
-          ([field, filterValue]) => {
-            if (
-              filterValue === undefined ||
-              filterValue === null ||
-              filterValue === ""
-            ) {
-              return true;
-            }
+        Object.entries(filters).every(([field, filterValue]) => {
+          if (
+            filterValue === undefined ||
+            filterValue === null ||
+            filterValue === ""
+          ) {
+            return true;
+          }
 
-            const recordValue =
-              record[field as keyof T];
+          const recordValue = record[field as keyof T];
 
-            return valuesAreEqual(
-              recordValue,
-              filterValue,
-            );
-          },
-        ),
+          return valuesAreEqual(recordValue, filterValue);
+        }),
       );
     }
 
@@ -164,30 +125,15 @@ constructor(collectionName: string) {
           secondRecord[sortBy],
         );
 
-        return sortDirection === "asc"
-          ? comparison
-          : comparison * -1;
+        return sortDirection === "asc" ? comparison : comparison * -1;
       });
     }
 
     const totalItems = records.length;
-    const totalPages = Math.max(
-      1,
-      Math.ceil(totalItems / safePageSize),
-    );
-
-    const normalizedPage = Math.min(
-      safePage,
-      totalPages,
-    );
-
-    const startIndex =
-      (normalizedPage - 1) * safePageSize;
-
-    const data = records.slice(
-      startIndex,
-      startIndex + safePageSize,
-    );
+    const totalPages = Math.max(1, Math.ceil(totalItems / safePageSize));
+    const normalizedPage = Math.min(safePage, totalPages);
+    const startIndex = (normalizedPage - 1) * safePageSize;
+    const data = records.slice(startIndex, startIndex + safePageSize);
 
     return {
       data,
@@ -205,9 +151,7 @@ constructor(collectionName: string) {
   async getById(id: string): Promise<T> {
     await simulateNetworkDelay();
 
-    const record = this.read().find(
-      (item) => item.id === id,
-    );
+    const record = this.read().find((item) => item.id === id);
 
     if (!record) {
       throw new ApiError({
@@ -224,17 +168,12 @@ constructor(collectionName: string) {
     return record;
   }
 
-  async create(
-    input: CreateEntityInput<T>,
-  ): Promise<T> {
+  async create(input: CreateEntityInput<T>): Promise<T> {
     await simulateNetworkDelay();
 
     const records = this.read();
     const id = input.id?.trim() || generateId();
-
-    const duplicatedRecord = records.some(
-      (record) => record.id === id,
-    );
+    const duplicatedRecord = records.some((record) => record.id === id);
 
     if (duplicatedRecord) {
       throw new ApiError({
@@ -258,17 +197,12 @@ constructor(collectionName: string) {
     return record;
   }
 
-  async update(
-    id: string,
-    input: UpdateEntityInput<T>,
-  ): Promise<T> {
+  async update(id: string, input: UpdateEntityInput<T>): Promise<T> {
     await simulateNetworkDelay();
 
     const records = this.read();
 
-    const recordIndex = records.findIndex(
-      (record) => record.id === id,
-    );
+    const recordIndex = records.findIndex((record) => record.id === id);
 
     if (recordIndex === -1) {
       throw new ApiError({
@@ -301,9 +235,7 @@ constructor(collectionName: string) {
 
     const records = this.read();
 
-    const recordExists = records.some(
-      (record) => record.id === id,
-    );
+    const recordExists = records.some((record) => record.id === id);
 
     if (!recordExists) {
       throw new ApiError({
@@ -313,9 +245,7 @@ constructor(collectionName: string) {
       });
     }
 
-    const filteredRecords = records.filter(
-      (record) => record.id !== id,
-    );
+    const filteredRecords = records.filter((record) => record.id !== id);
 
     this.write(filteredRecords);
   }
@@ -323,9 +253,7 @@ constructor(collectionName: string) {
   async exists(id: string): Promise<boolean> {
     await simulateNetworkDelay();
 
-    return this.read().some(
-      (record) => record.id === id,
-    );
+    return this.read().some((record) => record.id === id);
   }
 
   async count(): Promise<number> {
