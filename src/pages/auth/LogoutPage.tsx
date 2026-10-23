@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { paths } from "../../app/router/Paths";
-import { useAuth } from "../../stores/auth.store";
+import { useAuth } from "../../stores/useAuth";
 
 export default function LogoutPage() {
   const navigate = useNavigate();
