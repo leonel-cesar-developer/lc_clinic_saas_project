@@ -1,5 +1,6 @@
 import { databaseCollections, fakeApiConfig } from "../types/config";
-import { readCollection, writeCollection } from "../api/core/local-storage";
+import { writeCollection } from "../api/core/local-storage";
+
 import type { Appointment } from "../types/appointment.type";
 import type { Doctor } from "../types/doctor.types";
 import type { Patient } from "../types/patient.types";
@@ -44,21 +45,19 @@ const patientsSeed: Patient[] = [
     taxNumber: "245678901",
     healthNumber: "123456789",
     status: "ACTIVE",
-
     createdAt: seedDate,
     updatedAt: seedDate,
   },
   {
     id: "patient-2",
-    name: "António Liquine",
-    email: "antonio.liquine@email.pt",
+    name: "Adão Domingos",
+    email: "adao.domingos@email.pt",
     phone: "+351 913 222 111",
     birthDate: "1975-09-22",
     gender: "MALE",
     taxNumber: "256789012",
     healthNumber: "987654321",
     status: "ACTIVE",
-
     createdAt: seedDate,
     updatedAt: seedDate,
   },
@@ -107,8 +106,8 @@ const doctorsSeed: Doctor[] = [
   },
   {
     id: "doctor-2",
-    name: "Dr. Cristeen Patrick",
-    email: "cristeen@clinic.pt",
+    name: "Dr. António Liquine Costa",
+    email: "antonio.liquine@clinic.pt",
     phone: "+351 211 000 102",
     licenseNumber: "OM-78542",
     specialty: "Clínica Geral",
@@ -214,31 +213,86 @@ const appointmentsSeed: Appointment[] = [
   },
 ];
 
+/**
+ * Cria uma coleção apenas quando a respetiva chave
+ * ainda não existe no localStorage.
+ *
+ * Uma coleção existente com [] é preservada.
+ */
 function seedCollection<T>(collection: string, records: T[]): void {
-  const currentRecords = readCollection<T>(collection);
+  const storageKey = `${fakeApiConfig.databasePrefix}:${collection}`;
 
-  if (currentRecords.length > 0) {
+  if (localStorage.getItem(storageKey) !== null) {
     return;
   }
 
   writeCollection(collection, records);
 }
 
-export function seedDatabase(): void {
-  const storedVersion = Number(localStorage.getItem(DATABASE_VERSION_KEY));
-
-  if (storedVersion === fakeApiConfig.databaseVersion) {
-    return;
-  }
-
+/**
+ * Inicializa todas as coleções da Fake API.
+ */
+function initializeDatabase(): void {
   seedCollection(databaseCollections.users, usersSeed);
   seedCollection(databaseCollections.patients, patientsSeed);
   seedCollection(databaseCollections.doctors, doctorsSeed);
   seedCollection(databaseCollections.medicalServices, medicalServicesSeed);
   seedCollection(databaseCollections.appointments, appointmentsSeed);
+}
 
-  localStorage.setItem(
-    DATABASE_VERSION_KEY,
-    String(fakeApiConfig.databaseVersion),
+/**
+ * Verifica se já existem coleções armazenadas.
+ * Isto permite distinguir uma instalação nova
+ * de uma base de dados antiga sem chave de versão.
+ */
+function hasExistingDatabase(): boolean {
+  return Object.values(databaseCollections).some((collection) => {
+    const storageKey = `${fakeApiConfig.databasePrefix}:${collection}`;
+
+    return localStorage.getItem(storageKey) !== null;
+  });
+}
+
+/**
+ * Inicializa a base de dados e verifica a sua versão.
+ * Não executa migrações automaticamente.
+ */
+
+export function seedDatabase(): void {
+  const storedVersionValue = localStorage.getItem(DATABASE_VERSION_KEY);
+  const currentVersion = fakeApiConfig.databaseVersion;
+
+  if (storedVersionValue === null) {
+    if (hasExistingDatabase()) {
+      throw new Error(
+        "Foram encontrados dados existentes sem versão registada. " +
+          "É necessário verificar a base de dados antes de a inicializar.",
+      );
+    }
+
+    initializeDatabase();
+    localStorage.setItem(DATABASE_VERSION_KEY, String(currentVersion));
+
+    return;
+  }
+
+  const storedVersion = Number(storedVersionValue);
+
+  if (!Number.isSafeInteger(storedVersion) || storedVersion < 1) {
+    throw new Error(`Versão da base de dados inválida: ${storedVersionValue}`);
+  }
+
+  if (storedVersion === currentVersion) {
+    return;
+  }
+
+  if (storedVersion > currentVersion) {
+    throw new Error(
+      "A versão da base de dados é superior à suportada pela aplicação.",
+    );
+  }
+
+  throw new Error(
+    `Migração da versão ${storedVersion} para ${currentVersion} ainda não implementada.`,
   );
 }

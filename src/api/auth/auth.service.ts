@@ -2,8 +2,7 @@ import { databaseCollections } from "../../fake-api/database";
 import { ApiError } from "../core/api-error";
 import { simulateNetworkDelay } from "../core/delay";
 import { readCollection } from "../core/local-storage";
-import type { User, PublicUser  } from "../../types/user.types";
-
+import type { User, PublicUser } from "../../types/user.types";
 
 const AUTH_SESSION_KEY = "lc-appointments-auth-session";
 
@@ -19,7 +18,6 @@ export interface AuthSession {
 
 function removePassword(user: User): PublicUser {
   const { password: _password, ...publicUser } = user;
-
   return publicUser;
 }
 
