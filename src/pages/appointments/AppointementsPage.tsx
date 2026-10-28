@@ -332,7 +332,7 @@ const services =
           type="button"
           onClick={openCreate}
           disabled={isLoading || isError || busy}
-          className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800"
+          className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 text-sm font-semibold text-white transition hover:bg-blue-700"
         >
           <Plus size={18} />
           Nova marcação

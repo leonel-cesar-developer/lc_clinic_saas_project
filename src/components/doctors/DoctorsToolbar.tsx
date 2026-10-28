@@ -70,7 +70,7 @@ export function DoctorsToolbar({
       <button
         type="button"
         onClick={onCreate}
-        className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 text-sm font-semibold text-white transition hover:bg-slate-800"
+        className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 text-sm font-semibold text-white transition hover:bg-blue-700"
       >
         <Plus className="h-4 w-4" />
         Novo médico
