@@ -371,9 +371,7 @@ export function PatientsStats({
         </div>
       </article>
 
-      {/* =====================================================
-          3 — AGE DISTRIBUTION
-      ===================================================== */}
+      {/*  3 — AGE DISTRIBUTION  */}
 
       <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
         <div className="flex items-start justify-between">

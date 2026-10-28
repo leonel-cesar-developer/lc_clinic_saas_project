@@ -120,13 +120,13 @@ export function PatientsToolbar({
           justify-center
           gap-2
           rounded-xl
-          bg-slate-900
+          bg-blue-600
           px-4
           text-sm
           font-semibold
           text-white
           transition
-          hover:bg-slate-800
+          hover:bg-blue-700
         "
       >
         <Plus className="h-4 w-4" />

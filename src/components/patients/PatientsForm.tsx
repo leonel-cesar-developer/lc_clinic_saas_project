@@ -476,7 +476,7 @@ export function PatientForm({
         <button
           type="submit"
           disabled={isSubmitting}
-          className="rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
+          className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
         >
           {isSubmitting
             ? "A guardar..."

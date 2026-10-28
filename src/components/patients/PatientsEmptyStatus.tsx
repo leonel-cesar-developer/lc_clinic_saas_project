@@ -26,7 +26,7 @@ export function PatientsEmptyState({
       <button
         type="button"
         onClick={onCreate}
-        className="mt-5 rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white"
+        className="mt-5 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white"
       >
         Cadastrar paciente
       </button>

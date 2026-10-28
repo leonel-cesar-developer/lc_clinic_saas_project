@@ -108,7 +108,7 @@ export default function DoctorsPage() {
             onClick={() => {
               void doctors.refetch();
             }}
-            className="mt-5 rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
+            className="mt-5 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
           >
             Tentar novamente
           </button>

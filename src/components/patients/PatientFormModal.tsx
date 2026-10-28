@@ -1,31 +1,14 @@
-import {
-  X,
-} from "lucide-react";
-
-import type {
-  Patient,
-} from "../../types/patient.types";
-
-import type {
-  PatientFormValues,
-} from "../../types/patient-dashboard.type";
-
-import {
-  PatientForm,
-} from "../../components/patients/PatientsForm";
+import { X } from "lucide-react";
+import type { Patient } from "../../types/patient.types";
+import type { PatientFormValues } from "../../types/patient-dashboard.type";
+import { PatientForm } from "../../components/patients/PatientsForm";
 
 interface PatientFormModalProps {
   open: boolean;
-
   patient?: Patient;
-
   isSubmitting: boolean;
-
   onClose: () => void;
-
-  onSubmit: (
-    values: PatientFormValues,
-  ) => Promise<void>;
+  onSubmit: (values: PatientFormValues) => Promise<void>;
 }
 
 export function PatientFormModal({
@@ -43,10 +26,7 @@ export function PatientFormModal({
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 p-4"
       onMouseDown={(event) => {
-        if (
-          event.target ===
-          event.currentTarget
-        ) {
+        if (event.target === event.currentTarget) {
           onClose();
         }
       }}
@@ -55,9 +35,7 @@ export function PatientFormModal({
         <header className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-100 bg-white px-6 py-5">
           <div>
             <h2 className="text-lg font-semibold text-slate-900">
-              {patient
-                ? "Editar paciente"
-                : "Cadastrar paciente"}
+              {patient ? "Editar paciente" : "Cadastrar paciente"}
             </h2>
 
             <p className="mt-1 text-sm text-slate-500">
@@ -77,9 +55,7 @@ export function PatientFormModal({
         <div className="p-6">
           <PatientForm
             patient={patient}
-            isSubmitting={
-              isSubmitting
-            }
+            isSubmitting={isSubmitting}
             onSubmit={onSubmit}
             onCancel={onClose}
           />
