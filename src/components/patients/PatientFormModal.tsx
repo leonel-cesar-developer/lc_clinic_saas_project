@@ -2,6 +2,7 @@ import { X } from "lucide-react";
 import type { Patient } from "../../types/patient.types";
 import type { PatientFormValues } from "../../types/patient-dashboard.type";
 import { PatientForm } from "../../components/patients/PatientsForm";
+
 interface PatientFormModalProps {
   open: boolean;
   patient?: Patient;

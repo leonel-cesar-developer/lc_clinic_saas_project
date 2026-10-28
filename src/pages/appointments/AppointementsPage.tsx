@@ -517,7 +517,7 @@ const services =
             <button
               type="button"
               onClick={() => setSelected(null)}
-              className="mt-6 w-full rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white"
+              className="mt-6 w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white"
             >
               Fechar
             </button>
